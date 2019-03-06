@@ -23,7 +23,24 @@ what should be done ?
 - put into wordcloud  -- piotr knows how
 '''
 
-def scrape_article(link):
+def hn_all_articles_on_page(link):
+    '''
+    Params: link (string, the link with http specified)
+    Return: a list of strings
+    Describe: returns a list of strings, with all the articles on that page in that list
+    '''
+    req = Request(link, headers={'User-Agent': 'Mozilla/5.0'})
+
+    wepage = urlopen(req)
+
+    soup = BeautifulSoup(webpage, 'html.parser')
+
+    searchpageresults = soup.find('div', attrs={'class': 'searchpageresults'})
+
+    # for each searchresult class, find the first a tag  (after the h2 tag with class searchheadline)
+    #  and pull out the link (href in it), set that as variable, add to list
+
+def scrape_hunt_news_article(link):
     '''
     Params: link (a string starting with http or https that
         leads to a huntnews article), string
@@ -46,7 +63,6 @@ def scrape_article(link):
     post_area = soup.find('div', attrs={'class': 'postarea'})
     story_details = soup.find('div', attrs={'class': 'storydetails'})
 
-
     # so lets take out more specific elements
     story_date = soup.find('span', attrs={'class': 'storydate'})
     story_byline = soup.find('span', attrs={'class': 'storybyline'})
@@ -60,6 +76,41 @@ def scrape_article(link):
     headline = story_headline.text.strip()
 
     return headline, byline, date, content
+
+
+def scrape_news_at_nu_article(link):
+    '''
+    Params: link (a string starting with http or https that
+        leads to a huntnews article), string
+    Return: headline, byline, date, content (strings all)
+    Describe: given a link, visits that link and attempts to scrape it by
+        as an article from news at northeastern
+    '''
+    req = Request(link, headers={'User-Agent': 'Mozilla/5.0'})
+    #
+    webpage = urlopen(req)
+    #
+    soup = BeautifulSoup(webpage, 'html.parser')
+    #
+    article_topper = soup.find('section', attrs={'class': 'article-topper'})
+    article_body = soup.find('div', attrs={'class': 'article-body'})
+
+    print('Topper:\n', article_topper)
+    print('Body:\n', article_body)
+    return 'sup', 'sup', 'sup', 'sup'
+
+def scrape_article(link):
+    '''
+    Params: link (a string starting with http or https that
+        leads to a huntnews article), string
+    Return: headline, byline, date, content (strings all)
+    Describe: given a link, visits that link and attempts to scrape it by
+        calling the appropriate helper function per publication
+    '''
+    if 'huntnewsnu.com' in link:
+        return scrape_huntnews_article(link)
+    elif 'news.northeastern.edu' in link:
+        return scrape_news_at_nu:
 
 def main():
     # what's the url?
