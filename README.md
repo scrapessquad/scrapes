@@ -3,7 +3,7 @@ This is where we will host our python code and whatnot
 
 
 
-Generated (folder)
+generated (folder)
 = the folder where we will store our generated csv's
 
 
@@ -11,11 +11,11 @@ Generated (folder)
 generator.py
 = fns that write stuff in a certain format to a csv in 'Generated' folder (will implement with scraping fns in driver)
 
-scraping.py 
+scraping.py
 = our initial scraping fns,
 
 visualization.py
-= the analysis and visualization fns 
+= the analysis and visualization fns
 
 
 
@@ -24,11 +24,11 @@ driver.py
 
 
 
-tests_generator.py
+test_generator.py
 = tests for generator fns (if that's feasible)
 
-tests_scraping.py
+test_scraping.py
 = the various tests we will have of our scraping fns
 
-tests_visualization.py
+test_visualization.py
 = the tests for the visualization fns
