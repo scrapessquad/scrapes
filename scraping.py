@@ -65,6 +65,10 @@ def main():
     # what's the url?
     PROF_URL = 'https://huntnewsnu.com/58179/campus/columbia-professor-presents-the-blessings-of-multiple-causes-at-nu/'
     FRISKY_URL = 'https://huntnewsnu.com/58316/featured-content/frisky-husky-delivers-free-contraception-to-students/'
+    
+    # this next one is from news@northeastern
+    SQUID_URL = 'https://news.northeastern.edu/2019/03/05/the-secret-of-squids-ability-to-change-colors-may-lie-in-an-unexpected-sparkle-on-its-skin/'
+    
     input_link = ''
     while input_link == '':
         input_link = input('Please copy and paste a link to a specific hunt '
