@@ -5,6 +5,7 @@ scraping.py
 '''
 from urllib.request import Request, urlopen
 from bs4 import BeautifulSoup
+import csv
 
 '''
 what should be done ?
@@ -22,23 +23,6 @@ what should be done ?
 - get rid of fluff words (using NLTK)
 - put into wordcloud  -- piotr knows how
 '''
-
-def hn_all_articles_on_page(link):
-    '''
-    Params: link (string, the link with http specified)
-    Return: a list of strings
-    Describe: returns a list of strings, with all the articles on that page in that list
-    '''
-    req = Request(link, headers={'User-Agent': 'Mozilla/5.0'})
-
-    wepage = urlopen(req)
-
-    soup = BeautifulSoup(webpage, 'html.parser')
-
-    searchpageresults = soup.find('div', attrs={'class': 'searchpageresults'})
-
-    # for each searchresult class, find the first a tag  (after the h2 tag with class searchheadline)
-    #  and pull out the link (href in it), set that as variable, add to list
 
 def scrape_hunt_news_article(link):
     '''
@@ -70,10 +54,22 @@ def scrape_hunt_news_article(link):
     story_headline = soup.find('h1', attrs={'class':'storyheadline'})
     ##permalinkphotobox = soup.find('div', attrs={'class':'permalinkphotobox'}) # this one isn't necessary, photo stuff
     # strip out unecessary stuff (span, p, a tags and the like)
-    date = story_date.text.strip()
-    byline = story_byline.text.strip()
-    content = story_content.text.strip()
-    headline = story_headline.text.strip()
+    if story_date is None:
+        date = ''
+    else:
+        date = story_date.text.strip()
+    if story_byline is None:
+        byline = ''
+    else:
+        byline = story_byline.text.strip()
+    if story_content is None:
+        content = ''
+    else:
+        content = story_content.text.strip()
+    if story_headline is None:
+        headline = ''
+    else:
+        headline = story_headline.text.strip()
 
     return headline, byline, date, content
 
@@ -108,11 +104,100 @@ def scrape_article(link):
         calling the appropriate helper function per publication
     '''
     if 'huntnewsnu.com' in link:
-        return scrape_huntnews_article(link)
+        return scrape_hunt_news_article(link)
     elif 'news.northeastern.edu' in link:
-        return scrape_news_at_nu:
+        return scrape_news_at_nu(link)
+
+def hn_all_articles_on_page(link):
+    '''
+    Params: link (string, the link with http specified)
+    Return: a list of strings
+    Describe: returns a list of strings, with all the articles on that page in that list
+    '''
+    req = Request(link, headers={'User-Agent': 'Mozilla/5.0'})
+
+    webpage = urlopen(req)
+
+    soup = BeautifulSoup(webpage, 'html.parser')
+
+    #searchpageresults = soup.find('div', attrs={'class': 'searchpageresults'})
+    #thing = soup.find('div', attrs={'class', 'searchresult'})
+    #thing = seachpageresults.find_all('a')
+    search_results = soup.find_all('div', attrs={'class': 'searchresult'})
+
+    list_o_links = list()
+    for val in search_results:
+        a = val.find('a')
+        some_link = a['href']
+        list_o_links.append(some_link)
+
+    return list_o_links
+    # for each searchresult class, find the first a tag  (after the h2 tag with class searchheadline)
+    #  and pull out the link (href in it), set that as variable, add to list
+
+
+def find_huntnews_last_page():
+    # this is just searching the pages of articles of hunt news with no actual
+    # query, so it returns all articles in order of publication date
+    link = 'https://huntnewsnu.com/page/1/?s'
+
+    # tell the site we're using firefox
+    req = Request(link, headers={'User-Agent': 'Mozilla/5.0'})
+    # open https request
+    webpage = urlopen(req)
+    # parse html we get back with beautiful soup
+    soup = BeautifulSoup(webpage, 'html.parser')
+    # pull out the nav bar at the bottom of the page (it shows the last page)
+    nav = thing = soup.find('div', attrs={'class': 'navigation'})
+    # pull out all list items in nav bar
+    thing = nav.find_all('li')
+    # remove the last element (preprocess data)
+    thing = thing[:len(thing) - 1]
+    # take the new last element (the number we're looking for get text)
+    last_page = thing[len(thing) - 1].get_text()
+    # that's the last page that exists, we return that number as an int
+    return int(last_page)        
 
 def main():
+    # so we have a list of all of the huntnews search pages
+    #  (so we can assemble a list of links to all articles
+    #  in order of publication)
+    START = 1
+    END = find_huntnews_last_page()
+    MIDDLE = 'https://huntnewsnu.com/page/'
+    POST = '/?s'
+    
+    HN_SEARCH = 'https://huntnewsnu.com/page/1/?s'
+
+    list_o_search_pages = list()
+    
+    for num in range(1, END + 1):
+        linky = MIDDLE + str(num) + POST
+        list_o_search_pages.append(linky)        
+        
+
+    with open('all_hunt_news_articles_March_6_2019.csv', mode='w', newline='') as file:
+        all_articles_writer = csv.writer(file, delimiter=',', quotechar='"',
+                                         quoting=csv.QUOTE_MINIMAL)
+        all_articles_writer.writerow(['URLs'])
+
+        for page_url in list_o_search_pages:
+            this_page_links = hn_all_articles_on_page(page_url)
+            for url in this_page_links:
+                all_articles_writer.writerow([url])
+
+    
+        
+    #print(list_o_search_pages)
+
+    #list_o_links = hn_all_articles_on_page(HN_SEARCH)
+
+    #for l in list_o_links:
+    #    print(l)
+    #print(thing.prettify())
+
+
+def other():
     # what's the url?
     PROF_URL = 'https://huntnewsnu.com/58179/campus/columbia-professor-presents-the-blessings-of-multiple-causes-at-nu/'
     FRISKY_URL = 'https://huntnewsnu.com/58316/featured-content/frisky-husky-delivers-free-contraception-to-students/'
@@ -140,9 +225,6 @@ def main():
     print('Date:\n', date, '\n')
     print('Byline:\n', byline, '\n')
     print('Content:\n', content, '\n')  
-
-main()
-
 
 # extra things that I didn't delete yet cause it might be convenient later
 
