@@ -1,0 +1,54 @@
+
+# importing the necessery modules 
+from wordcloud import WordCloud
+import matplotlib.pyplot as plt 
+import csv
+import codecs
+
+
+def read_csv(line):
+    '''
+    Returns: a list of all the urls of articles from huntington news,
+    read from a preexisting csv file
+    '''
+    text = ''
+    with open('scraped_articles_DATE.csv', encoding="ISO-8859-1") as file:
+        csv_reader = csv.reader(file)
+        
+        # skip the headers
+        next(csv_reader, None)
+
+        counter = 2
+        for row in csv_reader:
+            url = row[0]
+            headline = row[1]
+            byline = row[2]
+            date = row[3]
+            content = row[4]
+
+            if counter == line:
+                return content
+            
+            counter += 1
+    return ''
+            
+
+
+lineYo = int(input('What line?'))
+article = read_csv(lineYo)
+
+wordcloud = WordCloud(width=480, height=480, 
+            stopwords=["the", "and","but", "if", "to", "of", "at", "with",
+                       "we", "it", "on", "in", "from", "for", "her", "him",
+                       "up", "just", "had", "they", "that", "said", "got", "did",
+                       "really", "their", "or", "who", "is", "its", "be", "am", "are"
+                       "was", "about", "so", "also", "this", "you", "would", "she", 
+                       "could", "can"
+                       ]).generate(article) 
+  
+plt.figure() 
+plt.imshow(wordcloud, interpolation="bilinear") 
+plt.axis("off") 
+plt.margins(x=0, y=0) 
+plt.show()
+
