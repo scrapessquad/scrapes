@@ -19,14 +19,13 @@ def main():
   print('main myperson')
 
   list_all_links = read_from_csv_list_all_links()
-  list_some_links = list_all_links[:100]
 
-  write_to_csv_list_o_urls(list_some_links)
+  write_to_csv_list_o_urls(list_all_links)
 
   # make a csv with the first 100 links in the csv and the scraped content
   #  from these links
 
   # row ,
-  
+
 
 main()

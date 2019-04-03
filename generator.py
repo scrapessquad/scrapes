@@ -75,7 +75,7 @@ def make_csv_urls_only(list_o_search_pages):
     all_articles_writer = csv.writer(file, delimiter=',', quotechar='"',
                                      quoting=csv.QUOTE_MINIMAL)
     all_articles_writer.writerow(['URLs'])
-    
+
     for page_url in list_o_search_pages:
       this_page_links = hn_all_articles_on_page(page_url)
       for url in this_page_links:
@@ -124,7 +124,7 @@ def read_from_csv_list_all_links():
             url = row[0]
             all_links.append(url)
     return all_links
-  
+
 def generate_csv_all_links():
   '''
   Params:
@@ -147,7 +147,7 @@ def generate_csv_all_links():
   make_csv_urls_only(list_o_search_pages)
 
 def write_to_csv_list_o_urls(list_links):
-    with open('scraped_articles_DATE.csv', mode='w', newline='') as file:
+    with open('scraped_articles_DATE.csv', encoding='utf-8', mode='w', newline='') as file:
         all_articles_writer = csv.writer(file, delimiter=',', quotechar='"',
                                      quoting=csv.QUOTE_MINIMAL)
         all_articles_writer.writerow(['URL',
