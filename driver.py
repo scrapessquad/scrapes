@@ -7,6 +7,14 @@ from afinn import Afinn
 import nltk
 from sentiment_analysis import demonstrate_nltk, get_corpus, expandFromIndices
 from scraping import scrape_hunt_news_article
+# from wordcloud2_specific_author import *
+import csv
+'''
+need to run
+'pip install wordcloud'
+to work properly
+'''
+
 
 '''
 file will be all about calling functions that are
@@ -16,28 +24,24 @@ starts them processes
 
 def main():
   '''
-  Params:
-  Return:
-  Describe:
+  the function which specifies the things we want to run
   '''
-  print('main myperson')
 
+  ''' This stuff: showing off the behavior of scrape_hunt_news_article when
+    hits a 404 error (broken link)
+    
   EXAMPLE_404_LINK = 'https://huntnewsnu.com/35970/lifestyle/event-calendar/35970/'
-  print(scrape_hunt_news_article(EXAMPLE_404_LINK))
+  string_to_print = scrape_hunt_news_article(EXAMPLE_404_LINK))
+  print(string_to_print)
+  '''
+
+  ''' This Stuff: What I ran to construct the big CSV file from the
+     may 6 scrape CSV file (with headline, byline, etc)
 
   list_all_links = read_from_csv_list_all_links()
   write_to_csv_list_o_urls(list_all_links)
-
-  
-  # make a csv with the first 100 links in the csv and the scraped content
-  #  from these links
-
-  # row ,
-
-
-
-
-  print('Afinn stuff')
+  '''
+  # print('Afinn stuff')
   afinn = Afinn()
   example_string = 'this is an example string'
   how_much_a_dollar_cost = """How much a dollar really cost?
@@ -119,20 +123,92 @@ Tears of a clown, guess I'm not all what is meant to be
 Shades of grey will never change if I condone
 Turn this page, help me change, so right my wrongs"""
 
+  # How does  afinn lexicon score the song how_much_a_dollar_cost?
   print(afinn.score(how_much_a_dollar_cost))
 
-
+  # runs nltk functions on an example string
   demonstrate_nltk(example_string)
 
+  # do get_corpus where we're searching for my from how_much_a_dollar_cost
   list_search_words = ['my']
   corpus_list = get_corpus(how_much_a_dollar_cost, list_search_words, 5)
-  print(corpus_list)
+  print('Words Pulled Out:', corpus_list)
 ##    corpus_string = corpus_list.join(" ")
   corpus_string = str.join(" ", corpus_list)
 
     # actually evaluate the corpus gathered for sentiment (negative is negative,
     # positive is positive
   print(afinn.score(corpus_string))
+
+  print('OK So Let\'s do this to our actual data')
+
+
+  # use the fn from other file
+  before_corpus = multiple_lines(9025, 11881, 'scraped_articles_DATE.csv')
+  after_corpus = multiple_lines(6939, 9024, 'scraped_articles_DATE.csv')
+
+  search_words = ['Northeastern', 'Administration', 'Aoun']
+  # get the words to score
+  before_list = get_corpus(before_corpus, search_words, 5)
+  after_list = get_corpus(after_corpus, search_words, 5)
+
+  # print out the corpuses just to see
+  print('The length of Before is:', len(before_list))
+  print('The length of After is:', len(after_list))
+
+
+  # turn these lists into strings with spaces in between each item
+  before = " ".join(before_list)
+  after = " ".join(after_list)
+
+  # find the afinn positivity scores and print them out
+  before_score = afinn.score(before)
+  after_score = afinn.score(after)
+  print('\nBefore Score:', before_score)
+  print('\nAfter Score:', after_score)
+  
+
+
+#####
+  #DUPLICATE CODE FROM ANOTHER FILE
+def multiple_lines(start, end, csv_name):
+    '''
+    Returns: a list of all the urls of articles from huntington news,
+    read from a preexisting csv file
+    '''
+    text = ''
+    with open(csv_name, encoding="ISO-8859-1") as file:
+        csv_reader = csv.reader(file)
+        
+        # skip the headers
+        next(csv_reader, None)
+
+        temporary = ''
+        counter = 2
+        selected = False
+        for row in csv_reader:
+            url = row[0]
+            headline = row[1]
+            byline = row[2]
+            date = row[3]
+            content = row[4]
+
+            if counter == start:
+                selected = True
+                print('counter', counter)
+
+            if selected == True:
+                temporary += content
+                print('count', counter)
+
+            if counter == end:
+                selected = False
+
+
+            counter += 1
+                
+    return temporary
+  
 
 
 main()
