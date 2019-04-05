@@ -119,7 +119,9 @@ def do_wordcloud(wordswordswords):
     plt.margins(x=0, y=0)
     plt.show()
     
-
+    
+#Uncomment the appropriate chunk of code as well as the plt function at the end in order to generate word-cloud
+    
 '''
 line = int(input('Which line? '))
 article = get_content_at_line(line)
