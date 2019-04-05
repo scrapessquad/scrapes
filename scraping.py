@@ -37,7 +37,15 @@ def scrape_hunt_news_article(link):
     # since we want to successfully make an http request, we make our own request
     req = Request(link, headers={'User-Agent': 'Mozilla/5.0'})
     # query website to get html of that page, put it in our variable
-    webpage = urlopen(req)
+
+    try:
+        webpage = urlopen(req)
+    except:
+        print('Caught HTTPError')
+        webpage = 'example'
+        pass
+
+    
     # we can use beautiful soup to work with this stuff
     # parse html using beaut soup, store in 'soup'
     soup = BeautifulSoup(webpage, 'html.parser')

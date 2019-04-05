@@ -6,6 +6,7 @@ from generator import read_from_csv_list_all_links, write_to_csv_list_o_urls
 from afinn import Afinn
 import nltk
 from sentiment_analysis import demonstrate_nltk, get_corpus, expandFromIndices
+from scraping import scrape_hunt_news_article
 
 '''
 file will be all about calling functions that are
@@ -21,9 +22,11 @@ def main():
   '''
   print('main myperson')
 
-##  list_all_links = read_from_csv_list_all_links()
-##
-##  write_to_csv_list_o_urls(list_all_links)
+  EXAMPLE_404_LINK = 'https://huntnewsnu.com/35970/lifestyle/event-calendar/35970/'
+  print(scrape_hunt_news_article(EXAMPLE_404_LINK))
+
+  list_all_links = read_from_csv_list_all_links()
+  write_to_csv_list_o_urls(list_all_links)
 
   
   # make a csv with the first 100 links in the csv and the scraped content
